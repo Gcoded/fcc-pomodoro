@@ -4,7 +4,7 @@ var timeArray = [];
 var minutes = 0;
 var seconds = 0;
 var totalSecs = 0;
-var timer1;
+var workTimer;
 var timerRunning = false;
 
 $('.adjust').click(function(event) {
@@ -33,14 +33,15 @@ $('.adjust').click(function(event) {
 
 function startTimer() {
     if(!timerRunning) {
-        timerRunning = true;
         timeArray = $('#timer').text().split(':');
         minutes = parseInt(timeArray[0]);
         seconds = parseInt(timeArray[1]);
         totalSecs = (minutes * 60) + (seconds * 1);
+        $('#message').css('visibility', 'visible');
 
-        timer1 = setInterval(function() {
+        workTimer = setInterval(function() {
             if(totalSecs > 0) {
+                timerRunning = true;
                 if(seconds === -1) {
                     seconds = 59;
                     minutes--;
@@ -53,22 +54,26 @@ function startTimer() {
                 totalSecs--;
             }
             else {
-                clearInterval(timer1);
+                clearInterval(workTimer);
                 timerRunning = false;
                 $('#timer').text('Times Up');
+                var sound = document.getElementById('sound');
+                sound.play();
             }
         }, 1000);
     }
 }
 
 function pauseTimer() {
-    clearInterval(timer1);
+    clearInterval(workTimer);
     timerRunning = false;
+    $('#message').css('visibility', 'hidden');
 }
 
 function resetTimer() {
-    clearInterval(timer1);
+    clearInterval(workTimer);
     timerRunning = false;
+    $('#message').css('visibility', 'hidden');
     minutes = parseInt($('#workTime').text());
     totalSecs = (minutes * 60);
     $('#timer').text(minutes + ':00');
