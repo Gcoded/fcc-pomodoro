@@ -6,6 +6,7 @@ var seconds = 0;
 var totalSecs = 0;
 var workTimer;
 var timerRunning = false;
+var working = true;
 
 $('.adjust').click(function(event) {
     if(!timerRunning) {
@@ -38,28 +39,51 @@ function startTimer() {
         seconds = parseInt(timeArray[1]);
         totalSecs = (minutes * 60) + (seconds * 1);
         $('#message').css('visibility', 'visible');
+        var sound = document.getElementById('sound');
 
+        timerRunning = true;
         workTimer = setInterval(function() {
-            if(totalSecs > 0) {
-                timerRunning = true;
-                if(seconds === -1) {
-                    seconds = 59;
-                    minutes--;
-                }
-                if(seconds < 10) {
-                    seconds = "0" + seconds;
-                }
-                $('#timer').text(minutes + ":" + seconds);
-                seconds--;
-                totalSecs--;
+            if(seconds === -1) {
+                seconds = 59;
+                minutes--;
             }
-            else {
-                clearInterval(workTimer);
-                timerRunning = false;
-                $('#timer').text('Times Up');
-                var sound = document.getElementById('sound');
+            if(seconds < 10) {
+                seconds = '0' + seconds;
+            }
+            $('#timer').text(minutes + ':' + seconds);
+
+            if(totalSecs === 0) {
                 sound.play();
+                working = !working;
+                $('#message').css('visibility', 'hidden');
             }
+            if(totalSecs <= -1 && totalSecs >= -3) {    //show message for 3 secs
+                if(working)
+                    $('#timer').text('Back to work!');
+                else
+                    $('#timer').text('Relax!');
+            }
+            if(totalSecs === -4) {
+                if(working) {
+                    minutes = parseInt($('#workTime').text());
+                    seconds = 0;
+                    totalSecs = minutes * 60;
+                    $('#message').text('Grindin...');
+                    $('#timer').text(minutes + ':00');
+                }
+                else {
+                    minutes = parseInt($('#breakTime').text());
+                    seconds = 0;
+                    totalSecs = minutes * 60;
+                    $('#message').text('Chillin...');
+                    $('#timer').text(minutes + ':00');
+                }
+                $('#message').css('visibility', 'visible');
+            }
+
+            seconds--;
+            totalSecs--;
+
         }, 1000);
     }
 }
