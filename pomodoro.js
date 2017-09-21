@@ -1,10 +1,9 @@
 
-var setTime = 0;
 var timeArray = [];
 var minutes = 0;
 var seconds = 0;
 var totalSecs = 0;
-var workTimer;
+var timer;
 var timerRunning = false;
 var working = true;
 
@@ -12,14 +11,18 @@ $('.adjust').click(function(event) {
     if(!timerRunning) {
         var parentID = event.target.parentNode.id;
         var adjustment = event.target.textContent;
+        var setTime = 0;
+
         if (parentID === 'workDiv') {
             setTime = parseInt($('#workTime').text());
             if(adjustment === '+')
                 setTime++;
             else if(setTime > 1)
                 setTime--;
+
             $('#workTime').text(setTime + ' minutes');
-            $('#timer').text(setTime + ':00');
+            if(working)     // only change timer if during work time
+                $('#timer').text(setTime + ':00');
         }
         else {
             setTime = parseInt($('#breakTime').text());
@@ -27,7 +30,10 @@ $('.adjust').click(function(event) {
                 setTime++;
             else if(setTime > 1)
                 setTime--;
+
             $('#breakTime').text(setTime + ' minutes');
+            if(!working)     // only change timer if during break time
+                $('#timer').text(setTime + ':00');
         }
     }
 });
@@ -42,15 +48,9 @@ function startTimer() {
         var sound = document.getElementById('sound');
 
         timerRunning = true;
-        workTimer = setInterval(function() {
-            if(seconds === -1) {
-                seconds = 59;
-                minutes--;
-            }
-            if(seconds < 10) {
-                seconds = '0' + seconds;
-            }
-            $('#timer').text(minutes + ':' + seconds);
+        timer = setInterval(function() {
+
+            displayNumbersAsTime();
 
             if(totalSecs === 0) {
                 sound.play();
@@ -63,7 +63,7 @@ function startTimer() {
                 else
                     $('#timer').text('Relax!');
             }
-            if(totalSecs === -4) {
+            if(totalSecs === -4) {          //After 3 second break, set timer for next activity
                 if(working) {
                     minutes = parseInt($('#workTime').text());
                     seconds = 0;
@@ -89,18 +89,30 @@ function startTimer() {
 }
 
 function pauseTimer() {
-    clearInterval(workTimer);
+    clearInterval(timer);
     timerRunning = false;
     $('#message').css('visibility', 'hidden');
 }
 
 function resetTimer() {
-    clearInterval(workTimer);
+    clearInterval(timer);
     timerRunning = false;
+    working = true;
+    $('#message').text('Grindin...');
     $('#message').css('visibility', 'hidden');
     minutes = parseInt($('#workTime').text());
     totalSecs = (minutes * 60);
     $('#timer').text(minutes + ':00');
 }
 
+function displayNumbersAsTime() {
+    if(seconds === -1) {
+        seconds = 59;
+        minutes--;
+    }
+    if(seconds < 10) {
+        seconds = '0' + seconds;
+    }
+    $('#timer').text(minutes + ':' + seconds);
+}
 
