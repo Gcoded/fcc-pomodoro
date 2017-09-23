@@ -10,12 +10,12 @@ var working = true;
 $('.adjust').click(function(event) {
     if(!timerRunning) {
         var parentID = event.target.parentNode.id;
-        var adjustment = event.target.textContent;
+        var adjustment = event.target.id;
         var setTime = 0;
 
         if (parentID === 'workDiv') {
             setTime = parseInt($('#workTime').text());
-            if(adjustment === '+')
+            if(adjustment === 'increase')
                 setTime++;
             else if(setTime > 1)
                 setTime--;
@@ -26,7 +26,7 @@ $('.adjust').click(function(event) {
         }
         else {
             setTime = parseInt($('#breakTime').text());
-            if(adjustment === '+')
+            if(adjustment === 'increase')
                 setTime++;
             else if(setTime > 1)
                 setTime--;

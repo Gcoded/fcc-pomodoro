@@ -11,6 +11,10 @@ body {
     text-align: center;
 }
 
+p {
+    margin: 10px;
+}
+
 h1 {
     font-size: 80px;
 }
@@ -31,7 +35,7 @@ a:link, a:visited {
 #footer {
     position: relative;
     text-align: center;
-    margin: 40px 20px;
+    margin: 60px 20px;
     font-size: 18px;
     font-style: italic;
 }
