@@ -49,7 +49,7 @@ $('.adjust').click(function(event) {
     }
 });
 
-function startTimer() {
+function runTimer() {
     if (!timerRunning) {
         timeArray = $('#timer').text().split(':');
         minutes = parseInt(timeArray[0]);
@@ -59,54 +59,72 @@ function startTimer() {
         var sound = document.getElementById('sound');
 
         timerRunning = true;
-        timer = setInterval(function() {
 
-            displayNumbersAsTime();
+        displayTime();
+        timer = setInterval(displayTime, 1000);
 
-            if (totalSecs === 0) {
-                sound.play();
-                working = !working;
-                if (working)
-                    backgroundColor = workColor;
-                else
-                    backgroundColor = breakColor;
-                $('#message').css('visibility', 'hidden');
-                $('body').css('background-color', backgroundColor);
-            }
-            if (totalSecs <= -1 && totalSecs >= -3) {    //show message for 3 secs
-                if (working)
-                    $('#timer').text('Back to work...');
-                else
-                    $('#timer').text('Relax!');
-            }
-            if (totalSecs === -4) {          //After 3 second break, set timer for next activity
-                if (working) {
-                    minutes = parseInt($('#workTime').text());
-                    seconds = 0;
-                    totalSecs = minutes * 60;
-                    $('#message').text('#GrindTime');
-                    $('#timer').text(minutes + ':00');
-                }
-                else {
-                    minutes = parseInt($('#breakTime').text());
-                    seconds = 0;
-                    totalSecs = minutes * 60;
-                    $('#message').text('#OnChill');
-                    $('#timer').text(minutes + ':00');
-                }
-                $('#message').css('visibility', 'visible');
-            }
-
-            seconds--;
-            totalSecs--;
-
-        }, 1000);
     }
     else {
         clearInterval(timer);
         timerRunning = false;
         $('#message').css('visibility', 'hidden');
     }
+}
+
+function displayTime() {
+    if (seconds === -1) {
+        seconds = 59;
+        minutes--;
+    }
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
+    $('#timer').text(minutes + ':' + seconds);
+
+    if(totalSecs < 1)
+        timerDoneActions();
+
+    seconds--;
+    totalSecs--;
+}
+
+function timerDoneActions() {
+    if (totalSecs === 0) {
+        sound.play();
+        working = !working;
+        if (working)
+            backgroundColor = workColor;
+        else
+            backgroundColor = breakColor;
+        $('#message').css('visibility', 'hidden');
+        $('body').css('background-color', backgroundColor);
+    }
+
+    if (totalSecs <= -1 && totalSecs >= -3) {    //show message for 3 secs
+        if (working)
+            $('#timer').text('Back to work...');
+        else
+            $('#timer').text('Relax!');
+    }
+
+    if (totalSecs === -4) {          //After 3 second break, set timer for next activity
+        if (working) {
+            minutes = parseInt($('#workTime').text());
+            seconds = 0;
+            totalSecs = minutes * 60;
+            $('#message').text('#GrindTime');
+            $('#timer').text(minutes + ':00');
+        }
+        else {
+            minutes = parseInt($('#breakTime').text());
+            seconds = 0;
+            totalSecs = minutes * 60;
+            $('#message').text('#OnChill');
+            $('#timer').text(minutes + ':00');
+        }
+        $('#message').css('visibility', 'visible');
+    }
+
 }
 
 function resetTimer() {
@@ -121,14 +139,4 @@ function resetTimer() {
     $('#timer').text(minutes + ':00');
 }
 
-function displayNumbersAsTime() {
-    if (seconds === -1) {
-        seconds = 59;
-        minutes--;
-    }
-    if (seconds < 10) {
-        seconds = '0' + seconds;
-    }
-    $('#timer').text(minutes + ':' + seconds);
-}
 
